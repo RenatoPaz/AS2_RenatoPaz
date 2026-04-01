@@ -1,38 +1,17 @@
-// pipeline {
-//     agent {
-//         docker {
-//             image 'node:22-alpine'
-//             reuseNode true
-//         }
-//     }
-
-//     stages {
-//         stage('Build') {
-//             steps {
-//                 sh '''
-//                     node -v
-//                     npm -v
-//                     npm install
-//                     npm run build
-//                 '''
-//             }
-//         }
-
-//         stage('Test') {
-//             steps {
-//                 sh '''
-//                     npm test -- --run
-//                 '''
-//             }
-//         }
-//     }
-// }
-
 pipeline {
     agent any
 
     tools {
         nodejs 'Node22'
+    }
+
+    triggers {
+        pollSCM('* * * * *')
+    }
+
+    environment {
+        NETLIFY_SITE_ID = 'f5efb78d-52ff-44f3-8667-7300c7a5ab33'
+        NETLIFY_AUTH_TOKEN = credentials('netlify-auth-token')
     }
 
     stages {
@@ -51,6 +30,14 @@ pipeline {
             steps {
                 sh '''
                     npm test -- --run
+                '''
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                    npx netlify deploy --dir=dist --prod
                 '''
             }
         }
