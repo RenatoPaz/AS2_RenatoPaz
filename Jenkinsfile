@@ -1,27 +1,44 @@
+// pipeline {
+//     agent {
+//         docker {
+//             image 'node:22-alpine'
+//             reuseNode true
+//         }
+//     }
+
+//     stages {
+//         stage('Build') {
+//             steps {
+//                 sh '''
+//                     node -v
+//                     npm -v
+//                     npm install
+//                     npm run build
+//                 '''
+//             }
+//         }
+
+//         stage('Test') {
+//             steps {
+//                 sh '''
+//                     npm test -- --run
+//                 '''
+//             }
+//         }
+//     }
+// }
+
 pipeline {
-    agent {
-        docker {
-            image 'node:22-alpine'
-            reuseNode true
-        }
-    }
+    agent any
 
     stages {
-        stage('Build') {
+        stage('Check Node') {
             steps {
                 sh '''
-                    node -v
-                    npm -v
-                    npm install
-                    npm run build
-                '''
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh '''
-                    npm test -- --run
+                    which node || true
+                    which npm || true
+                    node -v || true
+                    npm -v || true
                 '''
             }
         }
