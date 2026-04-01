@@ -1,10 +1,17 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:22-alpine'
+            reuseNode true
+        }
+    }
 
     stages {
         stage('Build') {
             steps {
                 sh '''
+                    node -v
+                    npm -v
                     npm install
                     npm run build
                 '''
